@@ -1,3 +1,15 @@
-﻿// See https://aka.ms/new-console-template for more information
-Console.WriteLine("Hello, World!");
+﻿using System.Text.RegularExpressions;
+
+namespace FloatingPointNumber
+{
+    class Program
+    {
+        static void Main(string[] arg)
+        {
+
+            FloatingPointNumberToBinarySingleFloatingPoint.ConvertFloatingPointNumberToBinarySingleFloatingPoint();
+
+        }
+    }
+}
 
