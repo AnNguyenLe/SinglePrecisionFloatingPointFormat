@@ -10,29 +10,41 @@ namespace FloatingPointNumber
             Console.Write("Input a floating point number: ");
             string floatingPointNumberString = Console.ReadLine();
 
+            if (floatingPointNumberString.Contains('.'))
+            {
+                string[] splittedFloat = floatingPointNumberString.Split(".", StringSplitOptions.RemoveEmptyEntries);
+                int integerPart = int.Parse(splittedFloat[0]);
+                string decimalPart = splittedFloat[1];
 
-            string[] splittedFloat = floatingPointNumberString.Split(".", StringSplitOptions.RemoveEmptyEntries);
-            int integerPart = int.Parse(splittedFloat[0]);
-            string decimalPart = splittedFloat[1];
+                string signBit = integerPart < 0 ? "1" : "0";
+                string sign = integerPart < 0 ? "-" : "+";
 
-            string signBit = integerPart < 0 ? "1" : "0";
-            string sign = integerPart < 0 ? "-" : "+";
+                if (int.Parse(decimalPart) == 0)
+                {
+                    ConvertIntergerToBinarySingleFloatingPoint(splittedFloat[0]);
+                }
 
 
-            string integerPartInBinary = DecToBinAlgorithm(integerPart);
-            string decimalPartInBinary = DecimalPartOfANumberToBinAlgorithm(decimalPart);
-            string binaryStringAfterStep1 = $"{integerPartInBinary}.{decimalPartInBinary}";
-            Console.WriteLine($"Step 1: Binary representation of {floatingPointNumberString} is {sign}{binaryStringAfterStep1}");
+                string integerPartInBinary = DecToBinAlgorithm(integerPart);
+                string decimalPartInBinary = DecimalPartOfANumberToBinAlgorithm(decimalPart);
+                string binaryStringAfterStep1 = $"{integerPartInBinary}.{decimalPartInBinary}";
+                Console.WriteLine($"Step 1: Binary representation of {floatingPointNumberString} is {sign}{binaryStringAfterStep1}");
 
-            string[] oneDotFormElements = Calculate1DotFMul2PowE(integerPartInBinary, decimalPartInBinary);
-            string significand = oneDotFormElements[0];
-            string exponent = oneDotFormElements[1];
-            Console.WriteLine($"Step 2: The form of (+/- 1.F * 2^E) representation for {floatingPointNumberString} is {sign}{significand}*2^{exponent}");
+                string[] oneDotFormElements = Calculate1DotFMul2PowE(integerPartInBinary, decimalPartInBinary);
+                string significand = oneDotFormElements[0];
+                string exponent = oneDotFormElements[1];
+                Console.WriteLine($"Step 2: The form of (+/- 1.F * 2^E) representation for {floatingPointNumberString} is {sign}{significand}*2^{exponent}");
 
-            string finalBinaryFloatingPoint = CalculateFinalBinaryFloatingPoint(signBit, exponent, significand);
-            Console.WriteLine($"Step 3: Final binary floating point: {finalBinaryFloatingPoint}");
+                string finalBinaryFloatingPoint = CalculateFinalBinaryFloatingPoint(signBit, exponent, significand);
+                Console.WriteLine($"Step 3: Final binary floating point: {finalBinaryFloatingPoint}");
 
-            Console.Read();
+                Console.Read();
+                return;
+            }
+
+
+            ConvertIntergerToBinarySingleFloatingPoint(floatingPointNumberString);
+
         }
 
         static public string DecToBinAlgorithm(int decNumber)
@@ -104,7 +116,7 @@ namespace FloatingPointNumber
             int exponentValue = 0;
             string[] returnValues = new string[2];
 
-            if (int.Parse(integerPartInBinary) < 1)
+            if (SingleFloatingPointToDecimal.IntegerBinaryPartToInteger(integerPartInBinary) < 1)
             {
                 string[] decimalPartElements = SplitStringInToArrayOfStrings(decimalPartInBinary);
                 int firstBitOnePosition = Array.FindIndex(decimalPartElements, (item) => item == "1");
@@ -130,6 +142,29 @@ namespace FloatingPointNumber
             string kBiasedBinaryOfExponent = DecToBinAlgorithm(int.Parse(exponent) + kBiasedValue);
             string rightPaddedZerosOfSignificand = significand.Split(".", StringSplitOptions.RemoveEmptyEntries)[1].PadRight(precision, '0');
             return $"{signBit} {kBiasedBinaryOfExponent} {rightPaddedZerosOfSignificand}";
+        }
+
+        public static void ConvertIntergerToBinarySingleFloatingPoint(string integer)
+        {
+            int integerPart = int.Parse(integer);
+            string signBit = integerPart < 0 ? "1" : "0";
+            string sign = integerPart < 0 ? "-" : "+";
+            string integerPartInBinary = DecToBinAlgorithm(integerPart);
+
+            string decimalPartInBinary = "";
+            string binaryStringAfterStep1 = $"{integerPartInBinary}";
+            Console.WriteLine($"Step 1: Binary representation of {integer} is {sign}{binaryStringAfterStep1}");
+
+            string[] oneDotFormElements = Calculate1DotFMul2PowE(integerPartInBinary, decimalPartInBinary);
+            string significand = oneDotFormElements[0];
+            string exponent = oneDotFormElements[1];
+            Console.WriteLine($"Step 2: The form of (+/- 1.F * 2^E) representation for {integer} is {sign}{significand}*2^{exponent}");
+
+            string finalBinaryFloatingPoint = CalculateFinalBinaryFloatingPoint(signBit, exponent, significand);
+            Console.WriteLine($"Step 3: Final binary floating point: {finalBinaryFloatingPoint}");
+
+            Console.Read();
+            return;
         }
     }
 }
